@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secretary — 自分専用の秘書アプリ</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗂️</text></svg>">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- アイコン定義（画面には表示されない） -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3h9L20 8.5v11A1.5 1.5 0 0 1 18.5 21h-13A1.5 1.5 0 0 1 4 19.5v-15Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="m14.5 6.5 3 3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.8h5V7M6.5 7l.9 12.2A1.8 1.8 0 0 0 9.2 21h5.6a1.8 1.8 0 0 0 1.8-1.8L17.5 7"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 9h10a5.5 5.5 0 0 1 0 11H8"/><path d="m8 4.5-4 4.5 4 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3.5h11L20.5 8v12.5a1 1 0 0 1-1 1h-14a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"/><path d="M8 3.5v6h7M8 21v-6h8v6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M3.5 13.5h4l1.5 3h6l1.5-3h4"/><path d="M5.8 4.5h12.4l2.3 9v5a1 1 0 0 1-1 1H4.5a1 1 0 0 1-1-1v-5l2.3-9Z"/></symbol>
+</svg>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">S</span>
+      <span class="brand-text">
+        <strong>Secretary</strong>
+        <small>自分専用の秘書アプリ</small>
+      </span>
+    </div>
+    <div class="today" id="today"></div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ダッシュボード -->
+  <section class="dashboard" aria-label="ダッシュボード">
+    <div class="stats">
+      <article class="stat">
+        <div class="stat-icon tone-blue"><svg class="icon"><use href="#i-note"/></svg></div>
+        <div class="stat-body">
+          <span class="stat-label">メモ</span>
+          <span class="stat-value" id="stat-memos">0</span>
+        </div>
+      </article>
+      <article class="stat">
+        <div class="stat-icon tone-violet"><svg class="icon"><use href="#i-check"/></svg></div>
+        <div class="stat-body">
+          <span class="stat-label">タスク</span>
+          <span class="stat-value" id="stat-tasks">0</span>
+        </div>
+      </article>
+      <article class="stat">
+        <div class="stat-icon tone-amber"><svg class="icon"><use href="#i-clock"/></svg></div>
+        <div class="stat-body">
+          <span class="stat-label">未完了タスク</span>
+          <span class="stat-value" id="stat-open-tasks">0</span>
+        </div>
+      </article>
+      <article class="stat">
+        <div class="stat-icon tone-green"><svg class="icon"><use href="#i-calendar"/></svg></div>
+        <div class="stat-body">
+          <span class="stat-label">振り返り</span>
+          <span class="stat-value" id="stat-reviews">0</span>
+        </div>
+      </article>
+    </div>
+
+    <!-- 最新の振り返り -->
+    <article class="latest" id="latest-review">
+      <header class="latest-head">
+        <span class="latest-eyebrow">最新の振り返り</span>
+        <span class="chip" id="latest-week">—</span>
+      </header>
+      <p class="latest-comment" id="latest-comment">まだ振り返りが記録されていません。</p>
+      <footer class="latest-meta" id="latest-meta"></footer>
+    </article>
+  </section>
+
+  <div class="grid">
+
+    <!-- メモ -->
+    <section class="card">
+      <header class="card-head">
+        <h2><svg class="icon"><use href="#i-note"/></svg>メモ</h2>
+        <span class="count" id="memo-count">0</span>
+      </header>
+
+      <form class="form" id="memo-form">
+        <input type="text" id="memo-title" placeholder="タイトル" maxlength="100" autocomplete="off">
+        <textarea id="memo-content" placeholder="本文" rows="3" maxlength="5000"></textarea>
+        <button type="submit" class="btn btn-primary">
+          <svg class="icon"><use href="#i-plus"/></svg>メモを追加
+        </button>
+      </form>
+
+      <ul class="list" id="memo-list"></ul>
+      <p class="empty" id="memo-empty">
+        <svg class="icon"><use href="#i-inbox"/></svg>まだメモがありません
+      </p>
+    </section>
+
+    <!-- タスク -->
+    <section class="card">
+      <header class="card-head">
+        <h2><svg class="icon"><use href="#i-check"/></svg>タスク</h2>
+        <span class="count" id="task-count">0</span>
+      </header>
+
+      <form class="form" id="task-form">
+        <input type="text" id="task-title" placeholder="やること（例: 請求書を送る）" maxlength="200" autocomplete="off">
+        <button type="submit" class="btn btn-primary">
+          <svg class="icon"><use href="#i-plus"/></svg>タスクを追加
+        </button>
+      </form>
+
+      <ul class="list" id="task-list"></ul>
+      <p class="empty" id="task-empty">
+        <svg class="icon"><use href="#i-inbox"/></svg>まだタスクがありません
+      </p>
+    </section>
+
+    <!-- 週次の振り返り -->
+    <section class="card card-wide">
+      <header class="card-head">
+        <h2><svg class="icon"><use href="#i-calendar"/></svg>週次の振り返り</h2>
+        <span class="count" id="review-count">0</span>
+      </header>
+
+      <form class="form form-row" id="review-form">
+        <label class="field">
+          <span class="field-label">対象の週</span>
+          <input type="week" id="review-week">
+        </label>
+        <label class="field field-grow">
+          <span class="field-label">振り返りコメント</span>
+          <textarea id="review-comment" placeholder="今週やったこと / うまくいったこと / 来週やること" rows="3" maxlength="5000"></textarea>
+        </label>
+        <button type="submit" class="btn btn-primary btn-align">
+          <svg class="icon"><use href="#i-save"/></svg>この週に記録
+        </button>
+      </form>
+      <p class="hint">同じ週にもう一度記録すると、その週のコメントを上書きします（1週1件）。</p>
+
+      <ul class="list" id="review-list"></ul>
+      <p class="empty" id="review-empty">
+        <svg class="icon"><use href="#i-inbox"/></svg>まだ振り返りがありません
+      </p>
+    </section>
+
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>
