@@ -121,7 +121,7 @@ function weekLabel(weekStr) {
 function renderDashboard(data) {
   $('stat-memos').textContent = data.memos.length;
   $('stat-tasks').textContent = data.tasks.length;
-  $('stat-open-tasks').textContent = data.tasks.filter((t) => !t.done).length;
+  $('stat-done-tasks').textContent = data.tasks.filter((t) => t.done).length;
   $('stat-reviews').textContent = data.reviews.length;
 
   $('memo-count').textContent = data.memos.length;
