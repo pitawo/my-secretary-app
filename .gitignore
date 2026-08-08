@@ -1,0 +1,16 @@
+# 保存データ（自分のメモ・タスク・振り返りが入るので公開しない）
+data/
+*.tmp
+
+# 依存パッケージ（今は使っていないが、入れたときのため）
+node_modules/
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 環境変数
+.env
+.env.*

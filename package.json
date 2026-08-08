@@ -1,0 +1,10 @@
+{
+  "name": "my-secretary-app",
+  "version": "1.0.0",
+  "description": "自分専用の秘書アプリ（メモ・タスク・ダッシュボード）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "private": true
+}
