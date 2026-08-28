@@ -9,7 +9,14 @@ let editingId = null;
 // サーバーとのやり取り
 // ---------------------------------------------------------------
 
+// サーバーがあればサーバーに、無ければブラウザの中に保存する。
+// 判定は初回の1回だけ行い、以降は同じ保存先を使い続ける。
+let useLocalStore = null;
+
 async function api(method, url, body) {
+  if (useLocalStore === null) useLocalStore = !(await serverIsAvailable());
+  if (useLocalStore) return LocalStore.handle(method, url, body || {});
+
   const options = { method, headers: {} };
   if (body) {
     options.headers['Content-Type'] = 'application/json';
@@ -19,6 +26,21 @@ async function api(method, url, body) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || '処理に失敗しました');
   return data;
+}
+
+// 静的ホスティングに置くと /api/data は 404 や HTML を返す。
+// JSON が返ってきたときだけサーバーありとみなす。
+async function serverIsAvailable() {
+  try {
+    const res = await fetch('/api/data', { headers: { Accept: 'application/json' } });
+    if (!res.ok) return false;
+    const type = res.headers.get('content-type') || '';
+    if (!type.includes('application/json')) return false;
+    await res.json();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 let toastTimer = null;
@@ -441,4 +463,12 @@ const weekInput = $('review-week');
 weekInput.value = isoWeekOf(now);          // 初期値は今週
 weekInput.placeholder = isoWeekOf(now);    // type="week" 非対応ブラウザ向け
 
-refresh();
+// サーバーが無い環境（デモ）では、空の画面を見せないように中身を入れておく
+(async () => {
+  if (useLocalStore === null) useLocalStore = !(await serverIsAvailable());
+  if (useLocalStore) {
+    LocalStore.seedIfEmpty();
+    document.body.classList.add('is-demo');
+  }
+  refresh();
+})();

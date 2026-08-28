@@ -484,3 +484,21 @@ input:focus, textarea:focus {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* デモ版（サーバー無し）でだけ出す告知 */
+.demo-note {
+  display: none;
+}
+
+.is-demo .demo-note {
+  display: block;
+  max-width: 960px;
+  margin: 0 auto 1.25rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid #d8d8e0;
+  border-radius: 6px;
+  background: #f7f7fb;
+  color: #55555f;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
