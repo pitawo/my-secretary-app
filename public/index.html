@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Secretary — 自分専用の秘書アプリ</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗂️</text></svg>">
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -38,6 +38,11 @@
 </header>
 
 <main class="container">
+
+  <p class="demo-note">
+    デモ版です。入力した内容は<strong>このブラウザの中だけ</strong>に保存され、どこにも送信されません。
+    別の端末やブラウザには引き継がれません。
+  </p>
 
   <!-- ダッシュボード -->
   <section class="dashboard" aria-label="ダッシュボード">
@@ -159,6 +164,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="/app.js"></script>
+<script src="local-store.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
